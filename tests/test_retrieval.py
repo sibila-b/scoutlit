@@ -7,7 +7,9 @@ def _make_arxiv_result(title: str = "Test Paper") -> MagicMock:
     r = MagicMock()
     r.entry_id = "https://arxiv.org/abs/2401.00001"
     r.title = title
-    r.authors = [MagicMock(name="Alice Smith")]
+    author = MagicMock()
+    author.name = "Alice Smith"
+    r.authors = [author]
     r.summary = "An abstract."
     r.published.isoformat.return_value = "2024-01-01T00:00:00"
     return r
