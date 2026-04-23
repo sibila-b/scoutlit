@@ -30,9 +30,14 @@ docker compose up
 ```
 
 All three services start automatically:
-- **Frontend** — http://localhost:3000
-- **Backend API** — http://localhost:8000
-- **ChromaDB** — http://localhost:8001
+
+| Service | URL | Expected response |
+|---|---|---|
+| Frontend | http://localhost:3000 | ScoutLit search UI |
+| Backend health | http://localhost:8000/health | `{"status":"ok"}` |
+| Backend docs | http://localhost:8000/docs | Swagger UI — full endpoint list |
+| Backend root | http://localhost:8000 | `{"detail":"Not Found"}` — expected, no root route defined |
+| ChromaDB | http://localhost:8001 | 404 — API-only, no browser UI |
 
 > The backend waits for ChromaDB to pass its health check before starting. First run pulls images and builds containers (~60 s on a fast connection).
 
@@ -56,6 +61,8 @@ scoutlit "attention mechanisms in transformer architectures"
 ## Project structure
 
 ```
+backend/           — FastAPI app (env-var validation, ChromaDB connection)
+frontend/          — Vite + React UI (served by nginx in Docker)
 src/
   retrieval/       — arXiv + Semantic Scholar clients
   classification/  — Claude-powered paper categorisation
@@ -63,6 +70,7 @@ src/
   gaps/            — research gap detection
 tests/             — unit tests (mocked API calls)
 .github/workflows/ — CI (lint + test matrix) and release pipeline
+docker-compose.yml — three-service local stack
 ```
 
 ## Environment variables
