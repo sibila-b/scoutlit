@@ -1,3 +1,3 @@
-from .paper_classifier import PaperCategory, PaperClassifier, ClassifiedPaper
+from .paper_classifier import ClassifiedPaper, PaperCategory, PaperClassifier
 
-__all__ = ["PaperCategory", "PaperClassifier", "ClassifiedPaper"]
+__all__ = ["ClassifiedPaper", "PaperCategory", "PaperClassifier"]

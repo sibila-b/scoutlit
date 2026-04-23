@@ -15,7 +15,8 @@ class ResearchGap(BaseModel):
 _SYSTEM = """\
 You are a research strategist. Given a set of classified papers on a topic, identify concrete
 research gaps — areas not yet studied, contradictions between findings, or promising extensions.
-For each gap output JSON with keys: description, suggested_question, supporting_papers (list of titles).
+For each gap output JSON with keys: description, suggested_question, supporting_papers (list of
+titles).
 Return a JSON array.
 """
 

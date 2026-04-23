@@ -1,3 +1,3 @@
-from .review_synthesizer import ReviewSynthesizer, LiteratureReview
+from .review_synthesizer import LiteratureReview, ReviewSynthesizer
 
-__all__ = ["ReviewSynthesizer", "LiteratureReview"]
+__all__ = ["LiteratureReview", "ReviewSynthesizer"]

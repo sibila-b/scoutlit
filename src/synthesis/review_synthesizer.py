@@ -65,7 +65,7 @@ class ReviewSynthesizer:
                 pos = text.find(other, start)
                 if pos != -1:
                     end = min(end, pos)
-            sections[heading] = text[start + len(heading) :end].strip(" :\n")
+            sections[heading] = text[start + len(heading) : end].strip(" :\n")
         return sections
 
     def _extract_gaps(self, gaps_text: str) -> list[str]:
