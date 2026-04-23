@@ -31,12 +31,13 @@ docker compose up
 
 All three services start automatically:
 
-| Service | URL | Notes |
+| Service | URL | Expected response |
 |---|---|---|
-| Frontend | http://localhost:3000 | React UI |
-| Backend API | http://localhost:8000/health | Returns `{"status":"ok"}` — no route exists at `/` |
-| Backend docs | http://localhost:8000/docs | Swagger UI listing all endpoints |
-| ChromaDB | http://localhost:8001 | Vector store — no browser UI |
+| Frontend | http://localhost:3000 | ScoutLit search UI |
+| Backend health | http://localhost:8000/health | `{"status":"ok"}` |
+| Backend docs | http://localhost:8000/docs | Swagger UI — full endpoint list |
+| Backend root | http://localhost:8000 | `{"detail":"Not Found"}` — expected, no root route defined |
+| ChromaDB | http://localhost:8001 | 404 — API-only, no browser UI |
 
 > The backend waits for ChromaDB to pass its health check before starting. First run pulls images and builds containers (~60 s on a fast connection).
 
