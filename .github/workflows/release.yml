@@ -20,5 +20,7 @@ jobs:
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           SEMANTIC_SCHOLAR_API_KEY: ${{ secrets.SEMANTIC_SCHOLAR_API_KEY }}
-      - name: Build Docker image
-        run: docker build -t scoutlit:${{ github.sha }} .
+      - name: Build backend image
+        run: docker build -f backend/Dockerfile -t scoutlit-backend:${{ github.sha }} .
+      - name: Build frontend image
+        run: docker build -f frontend/Dockerfile -t scoutlit-frontend:${{ github.sha }} frontend/
