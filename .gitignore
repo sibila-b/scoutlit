@@ -12,3 +12,10 @@ venv/
 .pytest_cache/
 .ruff_cache/
 *.log
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+
+# ChromaDB
+chroma_data/

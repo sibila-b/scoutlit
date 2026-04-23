@@ -8,7 +8,42 @@ All tasks, sprints, and delivered features are tracked on the project Jira board
 
 **[ScoutLit Agile Board (Jira)](https://sibila-s-workspace.atlassian.net/jira/software/projects/SCALA/boards/1/backlog)**
 
-## Quickstart
+## Local setup
+
+### Prerequisites
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) (includes Docker Compose)
+- Git
+
+### Steps
+
+```bash
+# 1. Clone
+git clone https://github.com/sibila-b/scoutlit.git
+cd scoutlit
+
+# 2. Configure environment
+cp .env.example .env
+# Open .env and fill in your API keys (ANTHROPIC_API_KEY is required)
+
+# 3. Start all services
+docker compose up
+```
+
+All three services start automatically:
+- **Frontend** — http://localhost:3000
+- **Backend API** — http://localhost:8000
+- **ChromaDB** — http://localhost:8001
+
+> The backend waits for ChromaDB to pass its health check before starting. First run pulls images and builds containers (~60 s on a fast connection).
+
+### Stopping
+
+```bash
+docker compose down          # stop containers
+docker compose down -v       # stop and delete ChromaDB volume
+```
+
+## Quickstart (CLI)
 
 ```bash
 cp .env.example .env
@@ -32,10 +67,12 @@ tests/             — unit tests (mocked API calls)
 
 ## Environment variables
 
-| Variable | Required | Description |
-|---|---|---|
-| `ANTHROPIC_API_KEY` | Yes | Claude API key |
-| `SEMANTIC_SCHOLAR_API_KEY` | No | Higher rate limits |
+| Variable | Required | Description | Example |
+|---|---|---|---|
+| `ANTHROPIC_API_KEY` | Yes | Claude API key | `sk-ant-…` |
+| `SEMANTIC_SCHOLAR_API_KEY` | No | Higher rate limits on Semantic Scholar | `your_key_here` |
+| `CHROMA_HOST` | No | ChromaDB hostname (default: `chromadb` in Docker) | `chromadb` |
+| `CHROMA_PORT` | No | ChromaDB port (default: `8000`) | `8000` |
 
 ## Development
 
