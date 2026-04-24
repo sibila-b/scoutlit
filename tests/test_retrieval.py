@@ -6,6 +6,7 @@ from src.retrieval.arxiv_client import ArxivClient, Paper
 def _make_arxiv_result(title: str = "Test Paper") -> MagicMock:
     r = MagicMock()
     r.entry_id = "https://arxiv.org/abs/2401.00001"
+    r.get_short_id.return_value = "2401.00001v1"
     r.title = title
     author = MagicMock()
     author.name = "Alice Smith"

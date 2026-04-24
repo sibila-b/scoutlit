@@ -18,7 +18,7 @@ def _is_transient(exc: BaseException) -> bool:
     return isinstance(exc, (httpx.TimeoutException, httpx.NetworkError))
 
 
-_FIELDS = "paperId,title,authors,abstract,year,externalIds,openAccessPdf"
+_FIELDS = "paperId,title,authors,abstract,year,externalIds,openAccessPdf,citationCount"
 
 
 class SemanticScholarClient:
@@ -50,6 +50,7 @@ class SemanticScholarClient:
                     published=str(item.get("year", "")),
                     url=pdf.get("url", f"https://www.semanticscholar.org/paper/{item['paperId']}"),
                     source="semantic_scholar",
+                    citation_count=item.get("citationCount"),
                 )
             )
         return papers

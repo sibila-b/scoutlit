@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from backend.app import VERSION
-from backend.app.routers import health
+from backend.app.routers import health, search
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -113,3 +113,4 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
 
 
 app.include_router(health.router, prefix="/api/v1")
+app.include_router(search.router, prefix="/api/v1")

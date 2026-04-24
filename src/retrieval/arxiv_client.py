@@ -12,6 +12,7 @@ class Paper(BaseModel):
     published: str
     url: str
     source: str = "arxiv"
+    citation_count: int | None = None
 
 
 class ArxivClient:
