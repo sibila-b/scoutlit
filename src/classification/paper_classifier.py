@@ -32,9 +32,19 @@ Respond with valid JSON: {"category": "<value>", "rationale": "<one sentence>"}
 """
 
 
+def _truncate_at_word(text: str, limit: int = 500) -> str:
+    if len(text) <= limit:
+        return text
+    return text[:limit].rsplit(" ", 1)[0] + "…"
+
+
 class PaperClassifier:
-    def __init__(self, model: str = "claude-sonnet-4-6") -> None:
-        self._client = anthropic.Anthropic()
+    def __init__(
+        self,
+        model: str = "claude-sonnet-4-6",
+        client: anthropic.Anthropic | None = None,
+    ) -> None:
+        self._client = client or anthropic.Anthropic()
         self._model = model
 
     def classify(self, paper: Paper, topic: str) -> ClassifiedPaper:
@@ -43,14 +53,17 @@ class PaperClassifier:
             f"Title: {paper.title}\n"
             f"Authors: {', '.join(paper.authors[:3])}\n"
             f"Year: {paper.published[:4]}\n"
-            f"Abstract: {paper.abstract[:500]}"
+            f"Abstract: {_truncate_at_word(paper.abstract)}"
         )
-        message = self._client.messages.create(
-            model=self._model,
-            max_tokens=256,
-            system=_SYSTEM,
-            messages=[{"role": "user", "content": prompt}],
-        )
+        try:
+            message = self._client.messages.create(
+                model=self._model,
+                max_tokens=256,
+                system=_SYSTEM,
+                messages=[{"role": "user", "content": prompt}],
+            )
+        except anthropic.APIError as exc:
+            raise RuntimeError(f"Claude API error during classification: {exc}") from exc
         data = json.loads(message.content[0].text)
         return ClassifiedPaper(
             paper=paper,
