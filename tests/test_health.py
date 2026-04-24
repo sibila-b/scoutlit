@@ -9,7 +9,7 @@ from fastapi.testclient import TestClient
 
 @pytest.fixture(scope="module")
 def client():
-    with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key"}):
+    with patch.dict("os.environ", {"ANTHROPIC_API_KEY": "test-key", "VOYAGE_API_KEY": "test-key"}):
         with patch("chromadb.HttpClient") as mock_chroma:
             mock_chroma.return_value = MagicMock()
             from backend.app.main import app

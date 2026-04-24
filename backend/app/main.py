@@ -20,7 +20,7 @@ from backend.app.routers import health, search
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-_REQUIRED_ENV_VARS = ["ANTHROPIC_API_KEY"]
+_REQUIRED_ENV_VARS = ["ANTHROPIC_API_KEY", "VOYAGE_API_KEY"]
 
 
 def _validate_env() -> None:
