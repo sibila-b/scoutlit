@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from concurrent.futures import ThreadPoolExecutor
 from enum import StrEnum
 
 import anthropic
@@ -64,12 +65,20 @@ class PaperClassifier:
             )
         except anthropic.APIError as exc:
             raise RuntimeError(f"Claude API error during classification: {exc}") from exc
-        data = json.loads(message.content[0].text)
-        return ClassifiedPaper(
-            paper=paper,
-            category=PaperCategory(data["category"]),
-            rationale=data["rationale"],
-        )
+        raw = message.content[0].text
+        try:
+            data = json.loads(raw)
+        except json.JSONDecodeError as exc:
+            raise RuntimeError(f"Claude returned invalid JSON: {raw!r}") from exc
+        try:
+            return ClassifiedPaper(
+                paper=paper,
+                category=PaperCategory(data["category"]),
+                rationale=data["rationale"],
+            )
+        except (KeyError, ValueError) as exc:
+            raise RuntimeError(f"Unexpected classification payload: {data}") from exc
 
     def classify_batch(self, papers: list[Paper], topic: str) -> list[ClassifiedPaper]:
-        return [self.classify(p, topic) for p in papers]
+        with ThreadPoolExecutor() as pool:
+            return list(pool.map(self.classify, papers, [topic] * len(papers)))

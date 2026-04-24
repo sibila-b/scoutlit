@@ -22,15 +22,18 @@ class ArxivClient:
     def search(self, query: str) -> list[Paper]:
         search = arxiv.Search(query=query, max_results=self._max_results)
         results = []
-        for r in self._client.results(search):
-            results.append(
-                Paper(
-                    id=r.entry_id,
-                    title=r.title,
-                    authors=[a.name for a in r.authors],
-                    abstract=r.summary,
-                    published=r.published.isoformat(),
-                    url=r.entry_id,
+        try:
+            for r in self._client.results(search):
+                results.append(
+                    Paper(
+                        id=r.get_short_id(),
+                        title=r.title,
+                        authors=[a.name for a in r.authors],
+                        abstract=r.summary,
+                        published=r.published.isoformat(),
+                        url=r.entry_id,
+                    )
                 )
-            )
+        except arxiv.ArxivError as exc:
+            raise RuntimeError(f"arXiv search failed: {exc}") from exc
         return results
