@@ -9,8 +9,8 @@ import pytest
 from src.classification.paper_classifier import ClassifiedPaper, PaperCategory
 from src.retrieval.arxiv_client import Paper
 
-
 # ── in-memory ChromaDB stub ────────────────────────────────────────────────────
+
 
 class _FakeCollection:
     """In-memory collection with real cosine-distance search."""
@@ -127,17 +127,23 @@ def _paper(pid: str, title: str, abstract: str) -> ClassifiedPaper:
 def three_papers() -> list[ClassifiedPaper]:
     return [
         _paper(
-            "p1", "Transformers for NLP",
-            "We introduce a self-attention mechanism for sequence modelling in natural language "
-            "processing tasks, enabling the model to capture long-range dependencies efficiently. " * 3,
+            "p1",
+            "Transformers for NLP",
+            (
+                "We introduce a self-attention mechanism for sequence modelling "
+                "in natural language processing tasks with long-range dependencies. "
+            )
+            * 3,
         ),
         _paper(
-            "p2", "Graph Neural Networks",
+            "p2",
+            "Graph Neural Networks",
             "Graph neural networks propagate information along edges in a graph structure to learn "
             "rich node embeddings for downstream classification and regression tasks. " * 3,
         ),
         _paper(
-            "p3", "Diffusion Models",
+            "p3",
+            "Diffusion Models",
             "Denoising diffusion probabilistic models learn to reverse a gradual noising process "
             "applied to data, generating high-quality samples in a wide variety of domains. " * 3,
         ),
@@ -145,6 +151,7 @@ def three_papers() -> list[ClassifiedPaper]:
 
 
 # ── integration tests ──────────────────────────────────────────────────────────
+
 
 def test_embed_and_store_then_search_returns_expected_top_result(
     three_papers: list[ClassifiedPaper],
@@ -157,8 +164,8 @@ def test_embed_and_store_then_search_returns_expected_top_result(
     # Each paper gets an orthogonal unit-vector embedding.
     # The query is aligned with p1 (dim 0), so p1 must rank first.
     emb_map = {
-        "self-attention": _unit_vec(0),   # p1
-        "Graph neural": _unit_vec(1),     # p2
+        "self-attention": _unit_vec(0),  # p1
+        "Graph neural": _unit_vec(1),  # p2
         "Denoising diffusion": _unit_vec(2),  # p3
     }
 
@@ -249,7 +256,8 @@ def test_failed_embedding_chunk_is_skipped() -> None:
 
     session_id = str(uuid.uuid4())
     paper = _paper(
-        "p9", "Some Paper",
+        "p9",
+        "Some Paper",
         "This abstract is long enough to be embeddable and contains useful content. " * 3,
     )
 

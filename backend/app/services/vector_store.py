@@ -54,7 +54,9 @@ def embed_and_store(
     )
 
     if collection.count() > 0:
-        logger.info("Collection %s already populated (%d chunks), reusing.", coll_name, collection.count())
+        logger.info(
+            "Collection %s already populated (%d chunks), reusing.", coll_name, collection.count()
+        )
         return StoreResult(chunks_stored=0, chunks_skipped=0, papers_processed=len(papers))
 
     all_ids: list[str] = []
@@ -69,16 +71,18 @@ def embed_and_store(
             pos = len(all_ids)
             all_ids.append(f"{p.id}__chunk_{chunk.chunk_index}")
             all_documents.append(chunk.text)
-            all_metadatas.append({
-                "paper_id": p.id,
-                "title": p.title,
-                "year": year,
-                "citation_count": p.citation_count or 0,
-                "source": p.source,
-                "classification": paper.category.value,
-                "chunk_index": chunk.chunk_index,
-                "embeddable": chunk.embeddable,
-            })
+            all_metadatas.append(
+                {
+                    "paper_id": p.id,
+                    "title": p.title,
+                    "year": year,
+                    "citation_count": p.citation_count or 0,
+                    "source": p.source,
+                    "classification": paper.category.value,
+                    "chunk_index": chunk.chunk_index,
+                    "embeddable": chunk.embeddable,
+                }
+            )
             if chunk.embeddable:
                 embeddable_positions.append(pos)
 
@@ -162,17 +166,19 @@ def search_similar(
         return results
 
     for doc, meta, dist in zip(raw["documents"][0], raw["metadatas"][0], raw["distances"][0]):
-        results.append(ChunkResult(
-            chunk_text=doc,
-            chunk_index=meta["chunk_index"],
-            distance=dist,
-            paper_id=meta["paper_id"],
-            title=meta["title"],
-            year=meta["year"],
-            citation_count=meta["citation_count"],
-            source=meta["source"],
-            classification=meta["classification"],
-            embeddable=meta["embeddable"],
-        ))
+        results.append(
+            ChunkResult(
+                chunk_text=doc,
+                chunk_index=meta["chunk_index"],
+                distance=dist,
+                paper_id=meta["paper_id"],
+                title=meta["title"],
+                year=meta["year"],
+                citation_count=meta["citation_count"],
+                source=meta["source"],
+                classification=meta["classification"],
+                embeddable=meta["embeddable"],
+            )
+        )
 
     return results

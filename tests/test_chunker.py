@@ -9,13 +9,14 @@ def _tokens(text: str) -> list[int]:
 
 def _make_text(min_tokens: int) -> str:
     """Return text that tokenizes to at least min_tokens without token-slice roundtrip issues."""
-    sentence = "The neural network processes language sequences using multi-head attention mechanisms. "
+    sentence = "The neural network processes language using multi-head attention mechanisms. "
     tokens_per = len(_tokens(sentence))
     repeats = (min_tokens // tokens_per) + 2
     return sentence * repeats
 
 
 # ── short / empty abstracts ────────────────────────────────────────────────────
+
 
 def test_empty_abstract_not_embeddable() -> None:
     chunks = chunk_abstract("")
@@ -42,6 +43,7 @@ def test_exactly_20_chars_is_embeddable() -> None:
 
 # ── single-chunk abstracts ─────────────────────────────────────────────────────
 
+
 def test_single_chunk_short_text() -> None:
     text = "We study neural networks and their applications in NLP."
     chunks = chunk_abstract(text)
@@ -64,6 +66,7 @@ def test_exactly_max_tokens_single_chunk() -> None:
 
 
 # ── multi-chunk abstracts ─────────────────────────────────────────────────────
+
 
 def test_multi_chunk_count() -> None:
     text = _make_text(2 * _MAX_TOKENS)
@@ -98,7 +101,7 @@ def test_overlap_between_consecutive_chunks() -> None:
 
     for i in range(len(chunks) - 1):
         start_next = (i + 1) * step
-        overlap_tokens_expected = all_tokens[start_next: start_next + _OVERLAP_TOKENS]
+        overlap_tokens_expected = all_tokens[start_next : start_next + _OVERLAP_TOKENS]
         overlap_tokens_actual = _tokens(chunks[i + 1].text)[:_OVERLAP_TOKENS]
         assert overlap_tokens_actual == overlap_tokens_expected, (
             f"Overlap mismatch between chunk {i} and {i + 1}"
