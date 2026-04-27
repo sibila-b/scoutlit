@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 import os
 import sys
@@ -15,7 +16,7 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from backend.app import VERSION
-from backend.app.routers import health, search
+from backend.app.routers import health, paper_search, search
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -94,7 +95,7 @@ async def validation_exception_handler(
             "error": "ValidationError",
             "message": "Request validation failed.",
             "status": 422,
-            "detail": exc.errors(),
+            "detail": json.loads(json.dumps(exc.errors(), default=str)),
         },
     )
 
@@ -113,4 +114,5 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
 
 
 app.include_router(health.router, prefix="/api/v1")
+app.include_router(paper_search.router, prefix="/api/v1")
 app.include_router(search.router, prefix="/api/v1")
