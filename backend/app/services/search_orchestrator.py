@@ -3,10 +3,10 @@ from __future__ import annotations
 import asyncio
 import logging
 
-from backend.app.models.paper_search import PaperResult
 from backend.app.services.arxiv_async import fetch_arxiv
 from backend.app.services.paper_deduplicator import deduplicate, sort_by_relevance
 from backend.app.services.semantic_scholar_async import fetch_semantic_scholar
+from src.models.paper import PaperResult
 
 logger = logging.getLogger(__name__)
 

@@ -6,7 +6,7 @@ import os
 
 import httpx
 
-from backend.app.models.paper_search import PaperResult
+from src.models.paper import PaperResult
 
 logger = logging.getLogger(__name__)
 

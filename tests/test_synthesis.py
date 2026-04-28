@@ -1,18 +1,18 @@
 from unittest.mock import MagicMock, patch
 
 from src.classification.paper_classifier import ClassifiedPaper, PaperCategory
-from src.retrieval.arxiv_client import Paper
+from src.models.paper import PaperResult
 from src.synthesis.review_synthesizer import LiteratureReview, ReviewSynthesizer
 
 
 def _classified(title: str, year: str, category: PaperCategory) -> ClassifiedPaper:
     return ClassifiedPaper(
-        paper=Paper(
+        paper=PaperResult(
             id=f"id-{year}",
             title=title,
             authors=["Smith et al."],
             abstract="Abstract text.",
-            published=f"{year}-01-01",
+            year=year,
             url=f"https://arxiv.org/abs/{year}",
         ),
         category=category,

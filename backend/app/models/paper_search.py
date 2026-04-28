@@ -2,17 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field, field_validator
 
-
-class PaperResult(BaseModel):
-    id: str
-    title: str
-    authors: list[str]
-    abstract: str
-    year: str
-    citation_count: int | None
-    source: str
-    url: str
-    doi: str | None = None
+from src.models.paper import PaperResult as PaperResult  # re-export
 
 
 class SearchRequest(BaseModel):

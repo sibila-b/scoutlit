@@ -30,9 +30,6 @@ dev = [
     "ruff>=0.4.0",
 ]
 
-[project.scripts]
-scoutlit = "scoutlit.cli:main"
-
 [tool.ruff]
 line-length = 100
 target-version = "py311"

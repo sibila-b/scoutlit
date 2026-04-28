@@ -1,18 +1,8 @@
 from __future__ import annotations
 
 import arxiv
-from pydantic import BaseModel
 
-
-class Paper(BaseModel):
-    id: str
-    title: str
-    authors: list[str]
-    abstract: str
-    published: str
-    url: str
-    source: str = "arxiv"
-    citation_count: int | None = None
+from src.models.paper import PaperResult
 
 
 class ArxivClient:
@@ -20,18 +10,18 @@ class ArxivClient:
         self._max_results = max_results
         self._client = arxiv.Client()
 
-    def search(self, query: str) -> list[Paper]:
+    def search(self, query: str) -> list[PaperResult]:
         search = arxiv.Search(query=query, max_results=self._max_results)
         results = []
         try:
             for r in self._client.results(search):
                 results.append(
-                    Paper(
+                    PaperResult(
                         id=r.get_short_id(),
                         title=r.title,
                         authors=[a.name for a in r.authors],
                         abstract=r.summary,
-                        published=r.published.isoformat(),
+                        year=r.published.isoformat()[:4],
                         url=r.entry_id,
                     )
                 )

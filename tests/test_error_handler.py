@@ -59,3 +59,14 @@ def test_500_structured_body(client: TestClient) -> None:
     assert data["error"] == "InternalServerError"
     assert "message" in data
     assert data["status"] == 500
+
+
+def test_global_handler_structured_body_no_traceback(client: TestClient) -> None:
+    response = client.get("/api/v1/boom")
+    data = response.json()
+    assert response.status_code == 500
+    assert data["error"] == "InternalServerError"
+    assert "message" in data
+    assert data["status"] == 500
+    assert "Traceback" not in response.text
+    assert "something went wrong" not in response.text

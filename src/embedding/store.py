@@ -79,7 +79,7 @@ class VectorStore:
                         {
                             "paper_id": paper.id,
                             "title": paper.title,
-                            "year": paper.published[:4],
+                            "year": paper.year,
                             "source": paper.source,
                             "classification": classified.category.value,
                             "chunk_index": 0,
@@ -112,7 +112,7 @@ class VectorStore:
                     {
                         "paper_id": paper.id,
                         "title": paper.title,
-                        "year": paper.published[:4],
+                        "year": paper.year,
                         "source": paper.source,
                         "classification": classified.category.value,
                         "chunk_index": chunk_index,

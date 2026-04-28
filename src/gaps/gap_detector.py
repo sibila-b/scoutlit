@@ -33,9 +33,7 @@ class GapDetector:
         self._model = model
 
     def detect(self, topic: str, papers: list[ClassifiedPaper]) -> list[ResearchGap]:
-        paper_list = "\n".join(
-            f"- {p.paper.title} ({p.paper.published[:4]}, {p.category})" for p in papers
-        )
+        paper_list = "\n".join(f"- {p.paper.title} ({p.paper.year}, {p.category})" for p in papers)
         prompt = f"Topic: {topic}\n\nPapers:\n{paper_list}"
 
         try:

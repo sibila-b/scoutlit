@@ -6,17 +6,17 @@ import pytest
 
 from src.classification.paper_classifier import ClassifiedPaper, PaperCategory
 from src.embedding.store import VectorStore
-from src.retrieval.arxiv_client import Paper
+from src.models.paper import PaperResult
 
 
 def _make_paper(paper_id: str, abstract: str, source: str = "arxiv") -> ClassifiedPaper:
     return ClassifiedPaper(
-        paper=Paper(
+        paper=PaperResult(
             id=paper_id,
             title=f"Paper {paper_id}",
             authors=["Author A"],
             abstract=abstract,
-            published="2024-01-01T00:00:00",
+            year="2024",
             url=f"https://arxiv.org/abs/{paper_id}",
             source=source,
         ),

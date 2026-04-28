@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 from fastapi.testclient import TestClient
 
-from backend.app.models.paper_search import PaperResult
+from src.models.paper import PaperResult
 
 
 @pytest.fixture(scope="module")
@@ -105,3 +105,50 @@ def test_search_source_warning_propagated(client: TestClient) -> None:
     ):
         data = client.post("/api/v1/search", json={"topic": "quantum computing"}).json()
     assert any("ArXiv" in w for w in data["warnings"])
+
+
+# --- three new required tests ---
+
+
+def test_similar_returns_503_when_chroma_none(client: TestClient) -> None:
+    from backend.app.main import app as _app
+
+    original = _app.state.chroma
+    _app.state.chroma = None
+    try:
+        response = client.post(
+            "/api/v1/search/similar",
+            json={"session_id": "test-session", "query": "attention mechanism"},
+        )
+        assert response.status_code == 503
+    finally:
+        _app.state.chroma = original
+
+
+async def test_partial_source_failure_returns_other_results() -> None:
+    from backend.app.services.search_orchestrator import run_search
+
+    good_paper = PaperResult(
+        id="p1",
+        title="Good Paper",
+        authors=["Author A"],
+        abstract="Abstract.",
+        year="2024",
+        citation_count=10,
+        source="semantic_scholar",
+        url="https://example.com/p1",
+    )
+
+    with patch(
+        "backend.app.services.search_orchestrator.fetch_arxiv",
+        new=AsyncMock(side_effect=RuntimeError("ArXiv is down")),
+    ):
+        with patch(
+            "backend.app.services.search_orchestrator.fetch_semantic_scholar",
+            new=AsyncMock(return_value=([good_paper], [])),
+        ):
+            papers, warnings = await run_search("neural nets", ["arxiv", "semantic_scholar"], 10)
+
+    assert len(papers) == 1
+    assert papers[0].id == "p1"
+    assert any("Source error" in w for w in warnings)

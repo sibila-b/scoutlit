@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 import unicodedata
 
-from backend.app.models.paper_search import PaperResult
+from src.models.paper import PaperResult
 
 
 def _normalize_title(title: str) -> str:

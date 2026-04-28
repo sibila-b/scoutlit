@@ -1,16 +1,16 @@
 from unittest.mock import MagicMock, patch
 
 from src.classification.paper_classifier import ClassifiedPaper, PaperCategory, PaperClassifier
-from src.retrieval.arxiv_client import Paper
+from src.models.paper import PaperResult
 
 
-def _sample_paper() -> Paper:
-    return Paper(
+def _sample_paper() -> PaperResult:
+    return PaperResult(
         id="arxiv:2401.00001",
         title="Attention Is All You Need",
         authors=["Vaswani et al."],
         abstract="We propose a new architecture...",
-        published="2017-06-12T00:00:00",
+        year="2017",
         url="https://arxiv.org/abs/1706.03762",
     )
 

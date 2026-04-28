@@ -55,7 +55,7 @@ class ReviewSynthesizer:
             # NOTE: takes last word as surname — fails for compound surnames (van den Berg)
             # and single-name authors; acceptable for citation format at this stage.
             f"[{p.paper.authors[0].split()[-1] if p.paper.authors else 'Unknown'} et al., "
-            f"{p.paper.published[:4]}] ({p.category})\n"
+            f"{p.paper.year}] ({p.category})\n"
             f"Title: {p.paper.title}\n"
             f"Abstract: {_truncate_at_word(p.paper.abstract)}"
             for p in papers

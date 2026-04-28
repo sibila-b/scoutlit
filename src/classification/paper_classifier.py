@@ -1,13 +1,16 @@
 from __future__ import annotations
 
 import json
+import re
 from concurrent.futures import ThreadPoolExecutor
 from enum import StrEnum
 
 import anthropic
 from pydantic import BaseModel
 
-from src.retrieval.arxiv_client import Paper
+from src.models.paper import PaperResult
+
+_FENCE_RE = re.compile(r"^```(?:json)?\s*\n?(.*?)\n?```\s*$", re.DOTALL)
 
 
 class PaperCategory(StrEnum):
@@ -17,7 +20,7 @@ class PaperCategory(StrEnum):
 
 
 class ClassifiedPaper(BaseModel):
-    paper: Paper
+    paper: PaperResult
     category: PaperCategory
     rationale: str
 
@@ -48,12 +51,12 @@ class PaperClassifier:
         self._client = client or anthropic.Anthropic()
         self._model = model
 
-    def classify(self, paper: Paper, topic: str) -> ClassifiedPaper:
+    def classify(self, paper: PaperResult, topic: str) -> ClassifiedPaper:
         prompt = (
             f"Topic: {topic}\n\n"
             f"Title: {paper.title}\n"
             f"Authors: {', '.join(paper.authors[:3])}\n"
-            f"Year: {paper.published[:4]}\n"
+            f"Year: {paper.year}\n"
             f"Abstract: {_truncate_at_word(paper.abstract)}"
         )
         try:
@@ -66,10 +69,11 @@ class PaperClassifier:
         except anthropic.APIError as exc:
             raise RuntimeError(f"Claude API error during classification: {exc}") from exc
         raw = message.content[0].text
+        stripped = _FENCE_RE.sub(r"\1", raw.strip())
         try:
-            data = json.loads(raw)
+            data = json.loads(stripped)
         except json.JSONDecodeError as exc:
-            raise RuntimeError(f"Claude returned invalid JSON: {raw!r}") from exc
+            raise RuntimeError(f"Claude returned invalid JSON: {raw[:200]!r}") from exc
         try:
             return ClassifiedPaper(
                 paper=paper,
@@ -79,6 +83,6 @@ class PaperClassifier:
         except (KeyError, ValueError) as exc:
             raise RuntimeError(f"Unexpected classification payload: {data}") from exc
 
-    def classify_batch(self, papers: list[Paper], topic: str) -> list[ClassifiedPaper]:
-        with ThreadPoolExecutor() as pool:
+    def classify_batch(self, papers: list[PaperResult], topic: str) -> list[ClassifiedPaper]:
+        with ThreadPoolExecutor(max_workers=5) as pool:
             return list(pool.map(self.classify, papers, [topic] * len(papers)))

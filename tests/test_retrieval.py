@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock, patch
 
-from src.retrieval.arxiv_client import ArxivClient, Paper
+from src.models.paper import PaperResult
+from src.retrieval.arxiv_client import ArxivClient
 
 
 def _make_arxiv_result(title: str = "Test Paper") -> MagicMock:
@@ -24,6 +25,6 @@ def test_arxiv_client_returns_papers():
         papers = client.search("transformers")
 
     assert len(papers) == 1
-    assert isinstance(papers[0], Paper)
+    assert isinstance(papers[0], PaperResult)
     assert papers[0].title == "Attention Is All You Need"
     assert papers[0].source == "arxiv"

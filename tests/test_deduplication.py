@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from backend.app.models.paper_search import PaperResult, SearchRequest
+from backend.app.models.paper_search import SearchRequest
 from backend.app.services.paper_deduplicator import deduplicate, sort_by_relevance
+from src.models.paper import PaperResult
 
 
 def _paper(

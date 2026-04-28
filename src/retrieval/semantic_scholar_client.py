@@ -5,7 +5,7 @@ import os
 import httpx
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
-from .arxiv_client import Paper
+from src.models.paper import PaperResult
 
 _BASE_URL = "https://api.semanticscholar.org/graph/v1"
 
@@ -32,7 +32,7 @@ class SemanticScholarClient:
         stop=stop_after_attempt(3),
         wait=wait_exponential(multiplier=1, min=2, max=10),
     )
-    def search(self, query: str, limit: int = 50) -> list[Paper]:
+    def search(self, query: str, limit: int = 50) -> list[PaperResult]:
         resp = self._http.get(
             "/paper/search",
             params={"query": query, "limit": limit, "fields": _FIELDS},
@@ -41,16 +41,19 @@ class SemanticScholarClient:
         papers = []
         for item in resp.json().get("data", []):
             pdf = item.get("openAccessPdf") or {}
+            ext = item.get("externalIds") or {}
             papers.append(
-                Paper(
+                PaperResult(
                     id=item["paperId"],
                     title=item.get("title", ""),
                     authors=[a["name"] for a in item.get("authors", [])],
                     abstract=item.get("abstract") or "",
-                    published=str(item.get("year", "")),
-                    url=pdf.get("url", f"https://www.semanticscholar.org/paper/{item['paperId']}"),
+                    year=str(item.get("year", "")),
+                    url=pdf.get("url")
+                    or f"https://www.semanticscholar.org/paper/{item['paperId']}",
                     source="semantic_scholar",
                     citation_count=item.get("citationCount"),
+                    doi=ext.get("DOI"),
                 )
             )
         return papers
